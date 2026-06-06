@@ -1,0 +1,741 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>紳士按摩 Gentleman Recovery</title>
+  <style>
+    :root {
+      --black: #050403;
+      --panel: #12100c;
+      --panel-soft: #19140e;
+      --gold: #d8b56f;
+      --gold-dark: #8e6c3a;
+      --cream: #f0e2c3;
+      --muted: #b5a68b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(rgba(0,0,0,.28), rgba(0,0,0,.56)),
+        url("assets/gentleman-bg.jpg") center top / cover fixed,
+        radial-gradient(circle at 50% 8%, rgba(216,181,111,.16), transparent 32rem),
+        radial-gradient(circle at 12% 88%, rgba(142,108,58,.16), transparent 24rem),
+        var(--black);
+      color: var(--cream);
+      font-family: "Noto Serif TC", "PMingLiU", Georgia, serif;
+    }
+    .app {
+      width: min(100%, 430px);
+      min-height: 100vh;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid rgba(216,181,111,.18);
+      border-right: 1px solid rgba(216,181,111,.18);
+      background:
+        linear-gradient(rgba(5,4,3,.18), rgba(5,4,3,.62)),
+        url("assets/gentleman-bg.jpg") center top / cover;
+      position: relative;
+    }
+    .app::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      width: min(100%, 430px);
+      margin: 0 auto;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(5,4,3,.08), rgba(5,4,3,.54) 56%, rgba(5,4,3,.82)),
+        radial-gradient(circle at 50% 18%, rgba(216,181,111,.08), transparent 18rem);
+      z-index: 0;
+    }
+    main {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      padding: 30px 22px 96px;
+      overflow: auto;
+    }
+    .stack { display: grid; gap: 22px; }
+    .brand {
+      text-align: center;
+      letter-spacing: .28em;
+      font-size: 34px;
+      font-weight: 700;
+      margin: 2px 0 0;
+    }
+    .en {
+      text-align: center;
+      color: var(--muted);
+      letter-spacing: .12em;
+      font-size: 14px;
+      margin-top: -16px;
+    }
+    .hero, .card {
+      background: linear-gradient(180deg, var(--panel-soft), #0a0806);
+      border: 1px solid rgba(216,181,111,.42);
+      border-radius: 10px;
+      box-shadow: 0 22px 54px rgba(0,0,0,.42);
+    }
+    .hero {
+      padding: 42px 20px 38px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: -30%;
+      background: radial-gradient(circle at 50% 20%, rgba(216,181,111,.18), transparent 22rem);
+      pointer-events: none;
+    }
+    .hero > * { position: relative; }
+    .tonight {
+      font-size: 44px;
+      letter-spacing: .32em;
+      margin: 0 0 14px;
+      color: #fff;
+    }
+    h1, h2 {
+      margin: 0;
+      color: var(--cream);
+      font-weight: 700;
+    }
+    h1 { font-size: 28px; letter-spacing: .08em; }
+    h2 { font-size: 29px; }
+    .copy, .sub, .label {
+      color: var(--muted);
+      line-height: 1.75;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    }
+    .copy { color: var(--cream); font-size: 16px; }
+    .sub { font-size: 15px; margin-top: -12px; }
+    .label { font-size: 14px; }
+    button, .clickable {
+      width: 100%;
+      min-height: 52px;
+      border-radius: 7px;
+      border: 1px solid var(--gold);
+      color: inherit;
+      font: 700 18px "Noto Serif TC", "PMingLiU", Georgia, serif;
+      letter-spacing: .18em;
+      cursor: pointer;
+      transition: transform .14s ease, opacity .14s ease, box-shadow .14s ease;
+      touch-action: manipulation;
+    }
+    button:active, .clickable:active {
+      transform: scale(.96);
+      opacity: .82;
+    }
+    .primary {
+      background: linear-gradient(135deg, #f0dcad, var(--gold) 54%, #8e6c3a);
+      color: #070605;
+      box-shadow: 0 12px 26px rgba(216,181,111,.18);
+    }
+    .secondary {
+      background: transparent;
+      color: var(--gold);
+    }
+    .chips {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .chip {
+      border: 1px solid rgba(216,181,111,.42);
+      border-radius: 7px;
+      padding: 10px 4px;
+      text-align: center;
+      color: var(--muted);
+      font: 14px "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    }
+    .section-title {
+      font-size: 21px;
+      margin: 8px 0 -6px;
+    }
+    .card {
+      padding: 17px;
+    }
+    .service {
+      display: grid;
+      gap: 8px;
+      background: var(--panel);
+    }
+    .service.selected {
+      border-color: var(--gold);
+      background: linear-gradient(180deg, #1b150e, #100d09);
+    }
+    .service-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .service-name { color: var(--cream); font-size: 23px; font-weight: 700; }
+    .price-wrap {
+      display: grid;
+      gap: 2px;
+      justify-items: end;
+      white-space: nowrap;
+    }
+    .price { color: var(--gold); font-size: 22px; font-weight: 700; }
+    .old-price {
+      color: rgba(240,226,195,.58);
+      font-size: 15px;
+      text-decoration: line-through;
+      text-decoration-thickness: 2px;
+      text-decoration-color: rgba(216,181,111,.82);
+    }
+    .note {
+      color: #d7c293;
+      font: 15px "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      line-height: 1.6;
+    }
+    .info {
+      display: grid;
+      gap: 8px;
+      background: var(--panel);
+    }
+    .info strong { font-size: 22px; }
+    .field {
+      display: grid;
+      gap: 8px;
+      padding: 17px;
+      background: var(--panel);
+      border: 1px solid rgba(216,181,111,.42);
+      border-radius: 10px;
+      color: var(--cream);
+      text-align: left;
+      letter-spacing: 0;
+    }
+    .field strong {
+      font-size: 22px;
+      line-height: 1.45;
+    }
+    .field .hint {
+      color: rgba(216,181,111,.72);
+      font: 14px "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    }
+    .address-field {
+      display: grid;
+      gap: 8px;
+      padding: 17px;
+      background: var(--panel);
+      border: 1px solid rgba(216,181,111,.42);
+      border-radius: 10px;
+    }
+    .address-field input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--cream);
+      font: 700 21px "Noto Serif TC", "PMingLiU", Georgia, serif;
+      padding: 0;
+    }
+    .address-field input::placeholder {
+      color: rgba(240,226,195,.45);
+    }
+    .sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      background: rgba(0,0,0,.64);
+    }
+    .sheet-backdrop.show { display: flex; }
+    .sheet {
+      width: min(100%, 430px);
+      max-height: 78vh;
+      overflow: auto;
+      padding: 20px 18px 24px;
+      border: 1px solid rgba(216,181,111,.42);
+      border-radius: 18px 18px 0 0;
+      background: #080705;
+      box-shadow: 0 -24px 70px rgba(0,0,0,.62);
+    }
+    .sheet-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .sheet h3 {
+      margin: 0;
+      font-size: 24px;
+      color: var(--cream);
+    }
+    .close {
+      width: 42px;
+      min-height: 42px;
+      padding: 0;
+      border-color: rgba(216,181,111,.42);
+      color: var(--gold);
+      background: transparent;
+      letter-spacing: 0;
+      font-size: 24px;
+      line-height: 1;
+    }
+    .option-list {
+      display: grid;
+      gap: 10px;
+    }
+    .option {
+      min-height: 56px;
+      padding: 14px 16px;
+      border-color: rgba(216,181,111,.38);
+      background: var(--panel);
+      color: var(--cream);
+      text-align: left;
+      letter-spacing: .04em;
+      font-size: 19px;
+      box-shadow: none;
+    }
+    .option.active {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: #1a140d;
+    }
+    .text-editor {
+      display: grid;
+      gap: 12px;
+    }
+    .text-editor input {
+      width: 100%;
+      min-height: 54px;
+      border: 1px solid rgba(216,181,111,.45);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--cream);
+      font: 700 20px "Noto Serif TC", "PMingLiU", Georgia, serif;
+      padding: 0 14px;
+      outline: 0;
+    }
+    .price-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(216,181,111,.38);
+      padding-top: 18px;
+    }
+    .success {
+      text-align: center;
+      padding-top: 44px;
+    }
+    .check {
+      color: var(--gold);
+      font-size: 66px;
+      line-height: 1;
+    }
+    nav {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      z-index: 3;
+      transform: translateX(-50%);
+      width: min(100%, 430px);
+      height: 74px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      padding: 8px 10px 10px;
+      background: #080705;
+      border-top: 1px solid rgba(216,181,111,.22);
+    }
+    nav button {
+      min-height: 0;
+      height: 100%;
+      letter-spacing: .08em;
+      font-size: 15px;
+      color: var(--muted);
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+    }
+    nav button.active {
+      color: var(--gold);
+      background: var(--panel-soft);
+      border-color: rgba(216,181,111,.42);
+    }
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 92px;
+      transform: translateX(-50%) translateY(16px);
+      width: min(86%, 360px);
+      padding: 13px 16px;
+      border-radius: 8px;
+      border: 1px solid rgba(216,181,111,.5);
+      background: rgba(18,15,11,.96);
+      color: var(--cream);
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: .2s ease;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <main id="screen"></main>
+    <nav>
+      <button data-tab="home" class="active">首頁</button>
+      <button data-tab="booking">預約</button>
+      <button data-tab="trips">行程</button>
+      <button data-tab="member">會員</button>
+    </nav>
+  </div>
+  <div id="toast" class="toast"></div>
+  <div id="sheetBackdrop" class="sheet-backdrop">
+    <section class="sheet">
+      <div class="sheet-head">
+        <h3 id="sheetTitle">選擇</h3>
+        <button class="close" id="sheetClose">×</button>
+      </div>
+      <div class="option-list" id="sheetOptions"></div>
+    </section>
+  </div>
+
+  <script>
+    const screen = document.querySelector("#screen");
+    const tabs = document.querySelectorAll("nav button");
+    const toastEl = document.querySelector("#toast");
+    const sheetBackdrop = document.querySelector("#sheetBackdrop");
+    const sheetTitle = document.querySelector("#sheetTitle");
+    const sheetOptions = document.querySelector("#sheetOptions");
+    const sheetClose = document.querySelector("#sheetClose");
+    const API_BASE = location.port === "4174"
+      ? `${location.protocol}//${location.hostname}:4180/api`
+      : `${location.origin}/api`;
+    let active = "home";
+    let selectedService = "深層修復";
+    const booking = {
+      area: "高雄市苓雅區",
+      address: "高雄市苓雅區 四維三路 100 號 8 樓",
+      time: "10:30",
+      note: "肩頸、腰背放鬆"
+    };
+    const member = {
+      level: "Gentleman Black",
+      address: "高雄市苓雅區 四維三路 100 號 8 樓",
+      phone: "0976-591-178",
+      instagram: "shan02_07"
+    };
+    const optionSets = {
+      area: [
+        "高雄市苓雅區", "高雄市前金區", "高雄市新興區", "高雄市三民區",
+        "高雄市左營區", "高雄市鼓山區", "高雄市前鎮區", "高雄市小港區",
+        "高雄市楠梓區", "高雄市鳳山區", "高雄市岡山區", "高雄市仁武區",
+        "高雄市大寮區", "高雄市橋頭區", "高雄市路竹區", "高雄市旗山區"
+      ],
+      time: [
+        "今天 10:00", "今天 11:30", "今天 13:00", "今天 14:30",
+        "今天 16:00", "今天 17:30", "今天 19:00", "今晚 20:30",
+        "今晚 22:00", "今晚 23:30", "凌晨 01:00",
+        "明天 10:00", "明天 11:30", "明天 13:00", "明天 14:30",
+        "明天 16:00", "明天 17:30", "明天 19:00", "明天 20:30",
+        "明天 22:00", "明天 23:30",
+        "後天 10:00", "後天 13:00", "後天 16:00", "後天 19:00", "後天 22:00"
+      ],
+      note: ["肩頸、腰背放鬆", "全身深層放鬆", "久坐腰背痠痛", "運動後修復", "睡眠壓力舒緩", "不指定，交由技師評估"]
+    };
+
+    const services = [
+      ["紳士舒壓", "60 分鐘 | 肩頸與背部放鬆", "適合下班後快速恢復狀態", "$2,800", "$1,500"],
+      ["深層修復", "90 分鐘 | 全身壓力釋放", "長時間工作與睡眠壓力首選", "$3,800", "$2,000"],
+      ["尊榮全身", "120 分鐘 | 完整到府療程", "為專屬會員安排深度休息", "$4,800", "$2,500"]
+    ];
+
+    function toast(message) {
+      toastEl.textContent = message;
+      toastEl.classList.add("show");
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(() => toastEl.classList.remove("show"), 1600);
+    }
+
+    function setTab(tab) {
+      active = tab;
+      tabs.forEach(btn => btn.classList.toggle("active", btn.dataset.tab === tab));
+      if (tab === "home") renderHome();
+      if (tab === "booking") renderBooking();
+      if (tab === "trips") renderTrips();
+      if (tab === "member") renderMember();
+      screen.scrollTop = 0;
+    }
+
+    function syncBookingAddressFromMember() {
+      if (!booking.address && member.address) booking.address = member.address;
+    }
+
+    function openOptions(key, title) {
+      sheetTitle.textContent = title;
+      sheetOptions.innerHTML = optionSets[key].map(value => `
+        <button class="option ${booking[key] === value ? "active" : ""}" data-option="${value}" data-key="${key}">
+          ${value}
+        </button>
+      `).join("");
+      sheetBackdrop.classList.add("show");
+      document.querySelectorAll("[data-option]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          booking[btn.dataset.key] = btn.dataset.option;
+          sheetBackdrop.classList.remove("show");
+          renderBooking();
+          toast(`${title}已選擇`);
+        });
+      });
+    }
+
+    function openTextEditor(title, currentValue, onSave) {
+      sheetTitle.textContent = title;
+      sheetOptions.innerHTML = `
+        <div class="text-editor">
+          <input id="editInput" value="${currentValue}">
+          <button class="primary" id="saveEdit">儲存</button>
+          <button class="secondary" id="cancelEdit">取消</button>
+        </div>
+      `;
+      sheetBackdrop.classList.add("show");
+      setTimeout(() => document.querySelector("#editInput").focus(), 50);
+      document.querySelector("#saveEdit").addEventListener("click", () => {
+        const value = document.querySelector("#editInput").value.trim();
+        if (!value) return;
+        onSave(value);
+        sheetBackdrop.classList.remove("show");
+        renderMember();
+        toast("資料已更新");
+      });
+      document.querySelector("#cancelEdit").addEventListener("click", () => sheetBackdrop.classList.remove("show"));
+    }
+
+    function serviceCards(selectable) {
+      return services.map(([name, desc, note, originalPrice, salePrice]) => `
+        <button class="card service clickable ${selectedService === name ? "selected" : ""}" data-service="${name}">
+          <span class="service-head">
+            <span class="service-name">${name}</span>
+            <span class="price-wrap">
+              ${salePrice ? `<span class="old-price">${originalPrice}</span><span class="price">${salePrice}</span>` : `<span class="price">${originalPrice}</span>`}
+            </span>
+          </span>
+          <span class="label">${desc}</span>
+          <span class="note">${note}</span>
+        </button>
+      `).join("");
+    }
+
+    function currentService() {
+      return services.find(item => item[0] === selectedService) || services[1];
+    }
+
+    function bindServices() {
+      document.querySelectorAll("[data-service]").forEach(card => {
+        card.addEventListener("click", () => {
+          selectedService = card.dataset.service;
+          toast(`${selectedService} 已選擇`);
+          renderBooking();
+        });
+      });
+    }
+
+    function renderHome() {
+      screen.innerHTML = `
+        <section class="stack">
+          <h1 class="brand">紳 士 按 摩</h1>
+          <div class="en">Gentleman Recovery</div>
+          <div class="hero">
+            <div class="tonight">今 晚</div>
+            <h1>讓紳士照顧你的疲憊</h1>
+            <p class="copy">下班後的你，值得一場真正的放鬆。<br>不必出門，不必等待。<br>在熟悉的家中，享受專屬於你的紳士服務。</p>
+          </div>
+          <button class="primary" id="bookNow">立即預約</button>
+          <div class="chips">
+            <div class="chip">身份驗證</div>
+            <div class="chip">專業技師</div>
+            <div class="chip">到府服務</div>
+          </div>
+          <h2 class="section-title">VIP 服務方案</h2>
+          ${serviceCards(false)}
+        </section>
+      `;
+      document.querySelector("#bookNow").addEventListener("click", () => setTab("booking"));
+      bindServices();
+    }
+
+    function renderBooking() {
+      syncBookingAddressFromMember();
+      screen.innerHTML = `
+        <section class="stack">
+          <div class="label">Step 1 / 5</div>
+          <h2>選擇今晚的修復</h2>
+          <div class="sub">預約制 VIP 到府服務，由專人確認安排</div>
+          ${serviceCards(true)}
+          <h2 class="section-title">預約資訊</h2>
+          <button class="field" data-picker="area">
+            <span class="label">服務地區</span>
+            <strong>${booking.area}</strong>
+            <span class="hint">點選更換地區</span>
+          </button>
+          <label class="address-field">
+            <span class="label">詳細到府地址</span>
+            <input id="address" value="${booking.address}" placeholder="請輸入路名、門牌、樓層或管理室備註">
+            <span class="hint">師傅會依此地址前往服務</span>
+          </label>
+          <button class="field" data-picker="time">
+            <span class="label">預約時段</span>
+            <strong>${booking.time}</strong>
+            <span class="hint">點選選擇時段</span>
+          </button>
+          <button class="field" data-picker="note">
+            <span class="label">需求備註</span>
+            <strong>${booking.note}</strong>
+            <span class="hint">點選選擇需求</span>
+          </button>
+          <button class="primary" id="confirm">確認預約</button>
+        </section>
+      `;
+      bindServices();
+      bindPickers();
+      bindAddressField();
+      document.querySelector("#confirm").addEventListener("click", () => {
+        saveAddressField();
+        setTab("trips");
+      });
+    }
+
+    function bindPickers() {
+      document.querySelectorAll("[data-picker]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const key = btn.dataset.picker;
+          const titleMap = { area: "選擇服務地區", time: "選擇預約時段", note: "選擇需求備註" };
+          openOptions(key, titleMap[key]);
+        });
+      });
+    }
+
+    function bindAddressField() {
+      const address = document.querySelector("#address");
+      if (address) address.addEventListener("input", saveAddressField);
+    }
+
+    function saveAddressField() {
+      const address = document.querySelector("#address");
+      if (address) {
+        booking.address = address.value;
+        member.address = address.value;
+      }
+    }
+
+    function renderTrips() {
+      const service = currentService();
+      const finalPrice = service[4] || service[3];
+      screen.innerHTML = `
+        <section class="stack">
+          <div class="label">Step 5 / 5</div>
+          <h2>確認專屬預約</h2>
+          <div class="sub">送出後由專人為您確認安排</div>
+          <div class="card info"><span class="label">服務方案</span><strong>${service[0]} ${service[1].split("|")[0].trim()}</strong></div>
+          <div class="card info"><span class="label">預約時間</span><strong>${booking.time || "未填寫"}</strong></div>
+          <div class="card info"><span class="label">到府地區</span><strong>${booking.area || "未填寫"}</strong></div>
+          <div class="card info"><span class="label">詳細地址</span><strong>${booking.address || "未填寫"}</strong></div>
+          <div class="card info"><span class="label">需求備註</span><strong>${booking.note || "未填寫"}</strong></div>
+          <div class="price-row">
+            <span class="label">預估金額</span>
+            <span class="price-wrap">
+              ${service[4] ? `<span class="old-price">${service[3]}</span>` : ""}
+              <strong class="price">${finalPrice}</strong>
+            </span>
+          </div>
+          <button class="primary" id="submit">送出預約</button>
+          <button class="secondary" id="support">聯絡專屬客服</button>
+        </section>
+      `;
+      document.querySelector("#submit").addEventListener("click", submitBooking);
+      document.querySelector("#support").addEventListener("click", () => toast("已為您開啟專屬客服聯繫"));
+    }
+
+    async function submitBooking() {
+      const service = currentService();
+      const finalPrice = service[4] || service[3];
+      try {
+        const response = await fetch(`${API_BASE}/orders`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            customer: "會員顧客",
+            service: service[0],
+            area: booking.area,
+            address: booking.address,
+            time: booking.time,
+            price: finalPrice,
+            note: booking.note
+          })
+        });
+        const order = await response.json();
+        renderSuccess(order.id);
+      } catch (error) {
+        toast("同步服務未啟動，先顯示預約成功");
+        renderSuccess("");
+      }
+    }
+
+    function renderSuccess(orderId = "") {
+      screen.innerHTML = `
+        <section class="stack success">
+          <div class="check">✓</div>
+          <h2>預約已送出</h2>
+          <div class="sub">專人會盡快確認您的時段與到府安排</div>
+          ${orderId ? `<div class="card info"><span class="label">訂單編號</span><strong>${orderId}</strong></div>` : ""}
+          <div class="card info"><span class="label">預約狀態</span><strong>已確認</strong></div>
+          <div class="card info"><span class="label">客服電話</span><strong>0976-591-178</strong></div>
+          <div class="card info"><span class="label">Instagram</span><strong>shan02_07</strong></div>
+          <button class="primary" id="homeBack">回到首頁</button>
+          <button class="secondary" id="tripsBack">查看我的行程</button>
+        </section>
+      `;
+      document.querySelector("#homeBack").addEventListener("click", () => setTab("home"));
+      document.querySelector("#tripsBack").addEventListener("click", () => setTab("trips"));
+    }
+
+    function renderMember() {
+      screen.innerHTML = `
+        <section class="stack">
+          <h2>會員中心</h2>
+          <div class="sub">VIP Booking Profile</div>
+          <button class="field" data-member="level"><span class="label">會員身份</span><strong>${member.level}</strong><span class="hint">點選修改</span></button>
+          <button class="field" data-member="address"><span class="label">常用地址</span><strong>${member.address}</strong><span class="hint">點選修改</span></button>
+          <button class="field" data-member="phone"><span class="label">專屬客服</span><strong>${member.phone}</strong><span class="hint">點選修改</span></button>
+          <button class="field" data-member="instagram"><span class="label">Instagram</span><strong>${member.instagram}</strong><span class="hint">點選修改</span></button>
+        </section>
+      `;
+      document.querySelectorAll("[data-member]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const key = btn.dataset.member;
+          const titles = { level: "修改會員身份", address: "修改常用地址", phone: "修改專屬客服", instagram: "修改 Instagram" };
+          openTextEditor(titles[key], member[key], value => {
+            member[key] = value;
+            if (key === "address") booking.address = value;
+          });
+        });
+      });
+    }
+
+    tabs.forEach(btn => btn.addEventListener("click", () => setTab(btn.dataset.tab)));
+    sheetClose.addEventListener("click", () => sheetBackdrop.classList.remove("show"));
+    sheetBackdrop.addEventListener("click", event => {
+      if (event.target === sheetBackdrop) sheetBackdrop.classList.remove("show");
+    });
+    renderHome();
+  </script>
+</body>
+</html>

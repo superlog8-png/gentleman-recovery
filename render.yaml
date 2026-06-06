@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: gentleman-recovery
+    runtime: python
+    buildCommand: ""
+    startCommand: "python production-server.py"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
