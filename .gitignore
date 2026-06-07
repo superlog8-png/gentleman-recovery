@@ -1,0 +1,16 @@
+.gradle/
+build/
+**/build/
+local.properties
+*.log
+*.zip
+*.apk
+*.aab
+
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+.DS_Store
+Thumbs.db

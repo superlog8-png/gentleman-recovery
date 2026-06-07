@@ -1,15 +1,27 @@
 {
   "orders": [
     {
-      "id": "#GR-1027",
+      "id": "#GR-1030",
       "customer": "會員顧客",
-      "service": "紳士舒壓",
+      "service": "尊榮全身",
       "area": "高雄市鼓山區",
-      "address": "高雄市鼓山區美術東二路 100 號 8 樓",
+      "address": "高雄市苓雅區  100 號 8 樓",
+      "time": "10:30",
+      "price": "$2,500",
+      "status": "已結束",
+      "therapist": "阿杰",
+      "note": "運動後修復"
+    },
+    {
+      "id": "#GR-1027",
+      "customer": "王先生",
+      "service": "紳士舒壓",
+      "area": "高雄市苓雅區",
+      "address": "四維三路 100 號 8 樓",
       "time": "今晚 20:30",
       "price": "$1,500",
-      "status": "已確認",
-      "therapist": "阿杰",
+      "status": "收單",
+      "therapist": "未派單",
       "note": "肩頸、腰背放鬆"
     },
     {
@@ -17,12 +29,24 @@
       "customer": "林先生",
       "service": "深層修復",
       "area": "高雄市三民區",
-      "address": "高雄市三民區建國一路 220 號 5 樓",
+      "address": "建國一路 220 號 5 樓",
       "time": "今晚 22:00",
       "price": "$2,000",
+      "status": "已結束",
+      "therapist": "阿杰",
+      "note": "全身深層放鬆"
+    },
+    {
+      "id": "#GR-1029",
+      "customer": "陳先生",
+      "service": "尊榮全身",
+      "area": "高雄市左營區",
+      "address": "博愛二路 366 號 12 樓",
+      "time": "明天 19:00",
+      "price": "$2,500",
       "status": "收單",
       "therapist": "Leo",
-      "note": "久坐肩背痠痛"
+      "note": "睡眠壓力舒緩"
     }
   ]
 }
