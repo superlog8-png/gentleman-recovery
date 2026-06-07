@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>紳士按摩後台</title>
+  <style>
+    :root{--black:#050403;--panel:#12100c;--gold:#d8b56f;--dark:#6b4f28;--cream:#f0e2c3;--muted:#b5a68b}
+    *{box-sizing:border-box} body{margin:0;background:#050403;color:var(--cream);font-family:"Noto Serif TC","PMingLiU",serif}
+    .app{width:min(100%,460px);min-height:100vh;margin:auto;background:linear-gradient(#090806,#050403);display:flex;flex-direction:column;border-left:1px solid rgba(216,181,111,.2);border-right:1px solid rgba(216,181,111,.2)}
+    main{flex:1;padding:28px 18px 92px}.stack{display:grid;gap:18px}.label{color:var(--muted);font:14px "Microsoft JhengHei",sans-serif}h1,h2{margin:0}h1{font-size:34px}h2{font-size:22px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.card{background:var(--panel);border:1px solid rgba(216,181,111,.45);border-radius:9px;padding:16px}.metric b{display:block;color:var(--gold);font-size:27px;margin-top:6px}
+    .order{display:grid;gap:10px}.head{display:flex;justify-content:space-between;gap:10px}.name{font-size:20px;font-weight:700}.badge{width:auto;min-height:auto;background:linear-gradient(135deg,#f0dcad,var(--gold));color:#050403;border-radius:6px;padding:6px 9px;font-size:13px;font-weight:700;white-space:nowrap;letter-spacing:0;border-color:var(--gold)}
+    .gold{color:var(--gold);font-weight:700}.row{color:var(--muted);font:14px "Microsoft JhengHei",sans-serif;line-height:1.6}
+    .actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}button{min-height:44px;border-radius:7px;border:1px solid rgba(216,181,111,.45);background:#050403;color:var(--gold);font:700 15px "Noto Serif TC","PMingLiU",serif;cursor:pointer;transition:.14s ease}button:active{transform:scale(.96);opacity:.82}
+    .plus{width:44px;min-height:44px;border-radius:50%;font-size:24px;line-height:1;letter-spacing:0;background:linear-gradient(135deg,#f0dcad,var(--gold));color:#050403;border-color:var(--gold)}
+    .job-btn{width:44px;min-height:44px;border-radius:50%;font-size:18px;line-height:1;letter-spacing:0;background:linear-gradient(135deg,#f0dcad,var(--gold));color:#050403;border-color:var(--gold)}
+    .title-row{display:flex;align-items:center;justify-content:space-between;gap:12px}.edit-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.edit-row button{font-size:14px}
+    nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,460px);height:74px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:8px 10px 10px;background:#080705;border-top:1px solid rgba(216,181,111,.25)}nav button.active{background:#1c160e}
+    .sheet{position:fixed;inset:0;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.62)}.sheet.show{display:flex}.panel{width:min(100%,460px);max-height:75vh;overflow:auto;background:#080705;border:1px solid rgba(216,181,111,.45);border-radius:18px 18px 0 0;padding:18px}.options{display:grid;gap:10px}.option{text-align:left;padding:14px 16px;background:var(--panel);color:var(--cream)}
+    .text-editor{display:grid;gap:12px}.text-editor input{width:100%;min-height:54px;border:1px solid rgba(216,181,111,.45);border-radius:8px;background:var(--panel);color:var(--cream);font:700 20px "Noto Serif TC","PMingLiU",serif;padding:0 14px}.primary{background:linear-gradient(135deg,#f0dcad,var(--gold));color:#050403;border-color:var(--gold)}
+  </style>
+</head>
+<body>
+  <div class="app"><main id="screen"></main><nav><button class="active" data-tab="orders">訂單</button><button data-tab="therapists">技師</button><button data-tab="settings">設定</button></nav></div>
+  <div class="sheet" id="sheet"><section class="panel"><h2 id="sheetTitle"></h2><div class="options" id="options"></div></section></div>
+  <script>
+    const API_BASE=location.port==="4175"
+      ? `${location.protocol}//${location.hostname}:4180/api`
+      : `${location.origin}/api`;
+    const ORDER_STATUSES=["已確認","收單","按摩中","已結束"];
+    const STATUS_MAP={"待確認":"已確認","已派遣":"收單","服務中":"按摩中","已完成":"已結束","已取消":"已結束"};
+    let orders=[
+      {id:"#GR-1027",customer:"王先生",service:"紳士舒壓",area:"高雄市苓雅區",address:"四維三路 100 號 8 樓",time:"今晚 20:30",price:"$1,500",status:"已確認",therapist:"未派單"},
+      {id:"#GR-1028",customer:"林先生",service:"深層修復",area:"高雄市三民區",address:"建國一路 220 號 5 樓",time:"今晚 22:00",price:"$2,000",status:"已確認",therapist:"阿杰"},
+      {id:"#GR-1029",customer:"陳先生",service:"尊榮全身",area:"高雄市左營區",address:"博愛二路 366 號 12 樓",time:"明天 19:00",price:"$2,500",status:"收單",therapist:"Leo"}
+    ];
+    const therapists=[
+      {name:"阿杰",status:"可接單",area:"苓雅、前金、新興",jobs:"2"},
+      {name:"Leo",status:"服務中",area:"左營、鼓山、三民",jobs:"2"},
+      {name:"Ken",status:"休息",area:"鳳山、小港、前鎮",jobs:"2"},
+      {name:"Hank",status:"可接單",area:"楠梓、仁武、岡山",jobs:"2"}
+    ];
+    const screen=document.querySelector("#screen"), sheet=document.querySelector("#sheet"), options=document.querySelector("#options"), sheetTitle=document.querySelector("#sheetTitle");
+    let activeTab="orders";
+    function normalizeStatus(order){order.status=STATUS_MAP[order.status]||order.status||"已確認";return order}
+    async function loadOrders(){try{const res=await fetch(`${API_BASE}/orders`);orders=(await res.json()).map(normalizeStatus)}catch(e){orders=orders.map(normalizeStatus)}}
+    async function syncOrder(i){const id=orders[i].id.replace("#","");try{await fetch(`${API_BASE}/orders/${id}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(orders[i])})}catch(e){}}
+    function revenue(){return orders.reduce((sum,o)=>sum+Number(String(o.price).replace(/[^\d]/g,"")),0)}
+    function renderOrders(){screen.innerHTML=`<section class="stack"><div class="label">Gentleman Recovery Admin</div><h1>管理後台</h1><div class="grid"><div class="card metric">今日訂單<b>${orders.length}</b></div><div class="card metric">已確認<b>${orders.filter(o=>o.status==="已確認").length}</b></div><div class="card metric">今日營收<b>$${revenue().toLocaleString()}</b></div><div class="card metric">可派技師<b>${therapists.filter(t=>t.status==="可接單").length}</b></div></div><h2>今日預約</h2>${orders.map((o,i)=>`<div class="card order"><div class="head"><span class="name">${o.id} ${o.customer}</span><button class="badge" onclick="pickStatus(${i})">${o.status}</button></div><div class="gold">${o.service} | ${o.price}</div><div class="row">${o.area} | ${o.time}<br>${o.address}<br>需求：${o.note||"未填寫"}<br>技師：${o.therapist}</div><div class="actions"><button onclick="pickStatus(${i})">狀態</button><button onclick="pickTherapist(${i})">派單</button><button onclick="alert('${o.customer}\\n${o.service}\\n${o.area}\\n${o.address}\\n${o.time}\\n${o.price}\\n${o.note||""}')">詳情</button></div></div>`).join("")}</section>`}
+    function renderTherapists(){screen.innerHTML=`<section class="stack"><div class="title-row"><h1>技師管理</h1><button class="plus" onclick="addTherapist()">＋</button></div>${therapists.map((t,i)=>`<div class="card"><div class="title-row"><h2>${t.name}</h2><button class="job-btn" onclick="showAssignedOrders(${i})">單</button></div><div class="row">${t.status}<br>${t.area}</div><div class="gold">今日行程：${assignedOrders(t.name).length} 單</div><div class="edit-row"><button onclick="editName(${i})">＋姓名</button><button onclick="editStatus(${i})">＋狀態</button><button onclick="editArea(${i})">＋區域</button></div></div>`).join("")}</section>`}
+    function renderSettings(){screen.innerHTML=`<section class="stack"><h1>價格與服務</h1><div class="card"><h2>紳士舒壓</h2><div class="row">原價 $2,800 | 特價 $1,500</div></div><div class="card"><h2>深層修復</h2><div class="row">原價 $3,800 | 特價 $2,000</div></div><div class="card"><h2>尊榮全身</h2><div class="row">原價 $4,800 | 特價 $2,500</div></div><div class="card"><h2>服務區域</h2><div class="row">高雄市苓雅、前金、新興、三民、左營、鼓山、前鎮、小港、楠梓、鳳山</div></div></section>`}
+    function openSheet(title, values, cb){sheetTitle.textContent=title;options.innerHTML=values.map(v=>`<button class="option">${v}</button>`).join("");sheet.classList.add("show");[...options.children].forEach((b,i)=>b.onclick=async()=>{await cb(values[i]);sheet.classList.remove("show");renderOrders()})}
+    function openSheetKeep(title, values, cb, rerender){sheetTitle.textContent=title;options.innerHTML=values.map(v=>`<button class="option">${v}</button>`).join("");sheet.classList.add("show");[...options.children].forEach((b,i)=>b.onclick=()=>{cb(values[i]);sheet.classList.remove("show");rerender()})}
+    function openTextEditor(title,current,cb){sheetTitle.textContent=title;options.innerHTML=`<div class="text-editor"><input id="editInput" value="${current}"><button class="primary" id="saveEdit">儲存</button><button id="cancelEdit">取消</button></div>`;sheet.classList.add("show");setTimeout(()=>document.querySelector("#editInput").focus(),50);document.querySelector("#saveEdit").onclick=()=>{const value=document.querySelector("#editInput").value.trim();if(value){cb(value);sheet.classList.remove("show");renderTherapists()}};document.querySelector("#cancelEdit").onclick=()=>sheet.classList.remove("show")}
+    function pickStatus(i){openSheet("更新狀態",ORDER_STATUSES,async v=>{orders[i].status=v;await syncOrder(i)})}
+    function pickTherapist(i){openSheet("選擇技師",["阿杰","Leo","Ken","Hank","未派單"],async v=>{orders[i].therapist=v;await syncOrder(i)})}
+    function assignedOrders(name){return orders.filter(o=>o.therapist===name)}
+    async function cycleAssignedOrderStatus(orderId){const order=orders.find(o=>o.id===orderId);if(!order)return;const next=ORDER_STATUSES[(ORDER_STATUSES.indexOf(order.status)+1)%ORDER_STATUSES.length];order.status=next;await syncOrder(orders.indexOf(order));showAssignedOrders(therapists.findIndex(t=>t.name===order.therapist))}
+    function showAssignedOrders(i){const t=therapists[i];const list=assignedOrders(t.name);sheetTitle.textContent=`${t.name} 指派單`;options.innerHTML=list.length?list.map(o=>`<div class="card order"><div class="head"><span class="name">${o.id} ${o.customer}</span><button class="badge" onclick="cycleAssignedOrderStatus('${o.id}')">${o.status}</button></div><div class="gold">${o.service} | ${o.price}</div><div class="row">${o.area} | ${o.time}<br>${o.address}<br>點右上狀態可切換：已確認 / 收單 / 按摩中 / 已結束</div></div>`).join(""):`<div class="card"><h2>目前沒有指派單</h2><div class="row">可回到訂單頁使用「派單」指定技師。</div></div>`;sheet.classList.add("show")}
+    function addTherapist(){therapists.push({name:"新技師",status:"可接單",area:"高雄市區",jobs:"0"}); renderTherapists()}
+    function editTherapist(i){openSheetKeep("選擇要編輯的欄位",["姓名","狀態","區域"],v=>{sheet.classList.remove("show");setTimeout(()=>{if(v==="姓名")editName(i); if(v==="狀態")editStatus(i); if(v==="區域")editArea(i)},120)},()=>{})}
+    function editName(i){openTextEditor("編輯技師姓名",therapists[i].name,v=>therapists[i].name=v)}
+    function editArea(i){openTextEditor("編輯服務區域",therapists[i].area,v=>therapists[i].area=v)}
+    function editStatus(i){openSheetKeep("更新技師狀態",["可接單","服務中","休息","暫停接單"],v=>therapists[i].status=v,renderTherapists)}
+    document.querySelectorAll("nav button").forEach(b=>b.onclick=async()=>{activeTab=b.dataset.tab;document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));b.classList.add("active"); if(b.dataset.tab==="orders"){await loadOrders();renderOrders()} if(b.dataset.tab==="therapists")renderTherapists(); if(b.dataset.tab==="settings")renderSettings()});
+    sheet.onclick=e=>{if(e.target===sheet)sheet.classList.remove("show")}; (async()=>{await loadOrders();renderOrders()})();
+    setInterval(async()=>{if(activeTab==="orders"&&!sheet.classList.contains("show")){await loadOrders();renderOrders()}},3000);
+  </script>
+</body>
+</html>
